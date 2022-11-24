@@ -42,8 +42,14 @@ class Backtest:
     def sell_all(self):
         self.holdings = {}
 
-    def buy(self, holdings):
-        self.holdings = holdings
+    def buy(self, ticker, percent=1):
+        del self.holdings[ticker]
+        new_holdings = {ticker: percent}
+        other_holdings_sum = sum(self.holdings.values())
+
+        for ticker, amount in self.holdings.items():
+            new_holdings[ticker] = amount / other_holdings_sum
+
 
     def run(self):
         start_index = self._start_date
