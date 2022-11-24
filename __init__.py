@@ -58,15 +58,21 @@ class Backtest:
             self.holdings = {ticker: 1}
             return
 
-        del self.holdings[ticker]
-        new_holdings = {ticker: percent}
+        holdings_sum = sum(self.holdings.values())
 
-        other_holdings_sum = sum(self.holdings.values())
+        if (1 - holdings_sum) >= percent:
+            self.holdings[ticker] = percent
+            return
 
-        for ticker, amount in self.holdings.items():
-            new_holdings[ticker] = amount / other_holdings_sum
+        other_holdings_sum = holdings_sum
+        if ticker in self.holdings:
+            other_holdings_sum -= self.holdings[ticker]
+            del self.holdings[ticker]
 
-        self.holdings = new_holdings
+        for other_ticker, amount in self.holdings.items():
+            self.holdings[other_ticker] = (amount / other_holdings_sum) * (1 - percent)
+
+        self.holdings[ticker] = percent
 
 
     def run(self):
