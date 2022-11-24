@@ -43,12 +43,19 @@ class Backtest:
         self.holdings = {}
 
     def buy(self, ticker, percent=1):
+        if percent == 1:
+            self.holdings = {ticker: 1}
+            return
+
         del self.holdings[ticker]
         new_holdings = {ticker: percent}
+
         other_holdings_sum = sum(self.holdings.values())
 
         for ticker, amount in self.holdings.items():
             new_holdings[ticker] = amount / other_holdings_sum
+
+        self.holdings = new_holdings
 
 
     def run(self):
